@@ -1,5 +1,5 @@
-# Resource Monitor with Alerts
 ![image](https://github.com/user-attachments/assets/d1914265-8e60-481a-86d7-fc48cd7b6668)
+# Resource Monitor with Alerts
 This project is a resource monitoring system built in Go (Golang) that tracks CPU, memory, disk usage, and temperature on your machine. The system periodically checks the resource usage and compares it against predefined thresholds. If any resource exceeds the threshold, a notification is triggered to alert the user. The application features a backend API and a graphical user interface (GUI) that can be used to monitor and manage these resources.
 
 ## Features
