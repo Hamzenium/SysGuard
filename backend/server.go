@@ -16,8 +16,8 @@ import (
 
 const (
 	CPUThreshold    = 80.0
-	MemoryThreshold = 90.0
-	DiskThreshold   = 80.0
+	MemoryThreshold = 80.0
+	DiskThreshold   = 90.0
 )
 
 type ResourceUsage struct {

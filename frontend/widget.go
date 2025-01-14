@@ -58,7 +58,7 @@ func toggleAlerts(enabled bool) error {
 }
 
 func createGraphWindow(a fyne.App) fyne.Window {
-	w := a.NewWindow("Resource Monitor")
+	w := a.NewWindow("SysGuard")
 
 	cpuGraph := widget.NewProgressBar()
 	cpuGraph.Min = 0
@@ -77,6 +77,7 @@ func createGraphWindow(a fyne.App) fyne.Window {
 			log.Println("Error toggling alerts:", err)
 		}
 	})
+	alertCheckbox.SetChecked(true) // Set the checkbox to be initially checked
 
 	go func() {
 		for {
