@@ -88,7 +88,6 @@ func toggleAlertHandler(w http.ResponseWriter, r *http.Request) {
 		alertEnabled = data.EnableAlerts
 		log.Printf("Alerts enabled: %v", alertEnabled)
 	}
-	w.WriteHeader(http.StatusOK)
 }
 
 // Resource usage handler

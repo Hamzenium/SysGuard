@@ -1,12 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
-
-	"encoding/json"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -37,6 +37,26 @@ func fetchResourceUsage() (*ResourceUsage, error) {
 	return &usage, nil
 }
 
+// Function to toggle the alert status on the backend
+func toggleAlerts(enabled bool) error {
+	data := struct {
+		EnableAlerts bool `json:"enable_alerts"`
+	}{enabled}
+
+	body, err := json.Marshal(data)
+	if err != nil {
+		return fmt.Errorf("error marshalling request body: %v", err)
+	}
+
+	resp, err := http.Post("http://localhost:8080/toggle-alerts", "application/json", bytes.NewReader(body))
+	if err != nil {
+		return fmt.Errorf("error sending alert toggle request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	return nil
+}
+
 func createGraphWindow(a fyne.App) fyne.Window {
 	w := a.NewWindow("Resource Monitor")
 
@@ -53,7 +73,9 @@ func createGraphWindow(a fyne.App) fyne.Window {
 	diskGraph.Max = 100
 
 	alertCheckbox := widget.NewCheck("Enable Alerts", func(enabled bool) {
-		// Add your alert enabling logic here if needed
+		if err := toggleAlerts(enabled); err != nil {
+			log.Println("Error toggling alerts:", err)
+		}
 	})
 
 	go func() {
