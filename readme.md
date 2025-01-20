@@ -9,7 +9,6 @@ This project is a resource monitoring system built in Go (Golang) that tracks CP
 - **Backend API**: Provides an API to fetch resource usage data and control alert settings.
 
 <img width="340" alt="Screenshot 2025-01-20 at 3 55 56 AM" src="https://github.com/user-attachments/assets/cdf02093-c207-4511-9308-cd031577a455" />
-<img width="344" alt="Screenshot 2025-01-20 at 3 57 21 AM" src="https://github.com/user-attachments/assets/69cec9c1-7768-445d-96e3-d090eebb0590" />
 
 ## Design Overview
 
