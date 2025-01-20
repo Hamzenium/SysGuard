@@ -8,7 +8,7 @@ This project is a resource monitoring system built in Go (Golang) that tracks CP
 - **Cross-Platform GUI**: A graphical user interface to monitor system resources and toggle alert notifications.
 - **Backend API**: Provides an API to fetch resource usage data and control alert settings.
 
-![image](https://github.com/user-attachments/assets/d1914265-8e60-481a-86d7-fc48cd7b6668)
+<img width="340" alt="Screenshot 2025-01-20 at 3 55 56 AM" src="https://github.com/user-attachments/assets/cdf02093-c207-4511-9308-cd031577a455" />
 
 ## Design Overview
 
