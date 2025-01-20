@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -57,6 +58,32 @@ func toggleAlerts(enabled bool) error {
 	return nil
 }
 
+// Function to change the resource usage limits on the backend
+func changeLimits(cpuThreshold, memoryThreshold, diskThreshold float64) error {
+	data := struct {
+		CPUThreshold    float64 `json:"cpu_threshold"`
+		MemoryThreshold float64 `json:"memory_threshold"`
+		DiskThreshold   float64 `json:"disk_threshold"`
+	}{
+		CPUThreshold:    cpuThreshold,
+		MemoryThreshold: memoryThreshold,
+		DiskThreshold:   diskThreshold,
+	}
+
+	body, err := json.Marshal(data)
+	if err != nil {
+		return fmt.Errorf("error marshalling request body: %v", err)
+	}
+
+	resp, err := http.Post("http://localhost:8080/limit-changer", "application/json", bytes.NewReader(body))
+	if err != nil {
+		return fmt.Errorf("error sending limit change request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	return nil
+}
+
 func createGraphWindow(a fyne.App) fyne.Window {
 	w := a.NewWindow("SysGuard")
 
@@ -78,6 +105,44 @@ func createGraphWindow(a fyne.App) fyne.Window {
 		}
 	})
 	alertCheckbox.SetChecked(true) // Set the checkbox to be initially checked
+
+	// Add input fields for changing the limits
+	cpuEntry := widget.NewEntry()
+	cpuEntry.SetPlaceHolder("Enter CPU Threshold")
+
+	memEntry := widget.NewEntry()
+	memEntry.SetPlaceHolder("Enter Memory Threshold")
+
+	diskEntry := widget.NewEntry()
+	diskEntry.SetPlaceHolder("Enter Disk Threshold")
+
+	// Button to submit new limits
+	changeLimitsButton := widget.NewButton("Change Limits", func() {
+		cpuThreshold, err := strconv.ParseFloat(cpuEntry.Text, 64)
+		if err != nil {
+			log.Println("Invalid CPU threshold")
+			return
+		}
+
+		memThreshold, err := strconv.ParseFloat(memEntry.Text, 64)
+		if err != nil {
+			log.Println("Invalid Memory threshold")
+			return
+		}
+
+		diskThreshold, err := strconv.ParseFloat(diskEntry.Text, 64)
+		if err != nil {
+			log.Println("Invalid Disk threshold")
+			return
+		}
+
+		// Send the new limits to the backend
+		if err := changeLimits(cpuThreshold, memThreshold, diskThreshold); err != nil {
+			log.Println("Error changing limits:", err)
+		} else {
+			log.Println("Limits updated successfully!")
+		}
+	})
 
 	go func() {
 		for {
@@ -104,6 +169,11 @@ func createGraphWindow(a fyne.App) fyne.Window {
 		widget.NewLabel("Disk Usage"),
 		diskGraph,
 		alertCheckbox, // Add the checkbox for enabling/disabling alerts
+		widget.NewLabel("Change Resource Limits"),
+		cpuEntry,
+		memEntry,
+		diskEntry,
+		changeLimitsButton,
 	)
 
 	w.SetContent(content)
