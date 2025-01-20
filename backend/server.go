@@ -14,20 +14,36 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-const (
-	CPUThreshold    = 80.0
-	MemoryThreshold = 80.0
-	DiskThreshold   = 90.0
-)
-
 type ResourceUsage struct {
 	CPUUsage    float64 `json:"cpu_usage"`
 	MemoryUsage float64 `json:"memory_usage"`
 	DiskUsage   float64 `json:"disk_usage"`
 }
 
-var alertEnabled bool
-var mu sync.Mutex // To protect the alertEnabled variable
+type SetLimit struct {
+	CPUThreshold    float64
+	MemoryThreshold float64
+	DiskThreshold   float64
+}
+
+var (
+	alertEnabled bool
+	mu           sync.Mutex
+	defaultLimit = setDefaultLimit()
+)
+
+func setDefaultLimit() SetLimit {
+	var cpu float64 = 90
+	var memory float64 = 90
+	var disk float64 = 90
+
+	limit := SetLimit{
+		CPUThreshold:    cpu,
+		MemoryThreshold: memory,
+		DiskThreshold:   disk,
+	}
+	return limit
+}
 
 // Get CPU usage
 func getCPUUsage() float64 {
@@ -60,19 +76,35 @@ func getDiskUsage() float64 {
 }
 
 // Send macOS notification if usage exceeds threshold
-func sendAlert(resource string, usage, threshold float64) {
+func sendAlert(resource string, usage float64) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	if alertEnabled && usage > threshold {
-		err := beeep.Alert(fmt.Sprintf("%s Alert", resource), fmt.Sprintf("%s usage is at %.2f%%!", resource, usage), "")
-		if err != nil {
-			log.Println("Error sending macOS notification:", err)
+	switch resource {
+	case "CPU":
+		if alertEnabled && usage > defaultLimit.CPUThreshold {
+			err := beeep.Alert(fmt.Sprintf("%s Alert", resource), fmt.Sprintf("%s usage is at %.2f%%!", resource, usage), "")
+			if err != nil {
+				log.Println("Error sending macOS notification:", err)
+			}
+		}
+	case "Disk":
+		if alertEnabled && usage > defaultLimit.DiskThreshold {
+			err := beeep.Alert(fmt.Sprintf("%s Alert", resource), fmt.Sprintf("%s usage is at %.2f%%!", resource, usage), "")
+			if err != nil {
+				log.Println("Error sending macOS notification:", err)
+			}
+		}
+	case "Memory":
+		if alertEnabled && usage > defaultLimit.MemoryThreshold {
+			err := beeep.Alert(fmt.Sprintf("%s Alert", resource), fmt.Sprintf("%s usage is at %.2f%%!", resource, usage), "")
+			if err != nil {
+				log.Println("Error sending macOS notification:", err)
+			}
 		}
 	}
 }
 
-// Toggle the alert status
 func toggleAlertHandler(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -87,6 +119,34 @@ func toggleAlertHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		alertEnabled = data.EnableAlerts
 		log.Printf("Alerts enabled: %v", alertEnabled)
+	}
+}
+
+func toggleLimitHandler(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	if r.Method == http.MethodPost {
+		var data struct {
+			CPUThreshold    float64 `json:"cpu_threshold"`
+			MemoryThreshold float64 `json:"memory_threshold"`
+			DiskThreshold   float64 `json:"disk_threshold"`
+		}
+
+		if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+			http.Error(w, "Invalid request", http.StatusBadRequest)
+			return
+		}
+
+		defaultLimit.CPUThreshold = data.CPUThreshold
+		defaultLimit.MemoryThreshold = data.MemoryThreshold
+		defaultLimit.DiskThreshold = data.DiskThreshold
+
+		log.Printf("Updated limits - CPU: %v, Memory: %v, Disk: %v", defaultLimit.CPUThreshold, defaultLimit.MemoryThreshold, defaultLimit.DiskThreshold)
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(defaultLimit); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
 }
 
@@ -111,9 +171,9 @@ func monitorResources() {
 		diskUsage := getDiskUsage()
 
 		// Check if the resource usage exceeds thresholds and send notifications
-		sendAlert("CPU", cpuUsage, CPUThreshold)
-		sendAlert("Memory", memUsage, MemoryThreshold)
-		sendAlert("Disk", diskUsage, DiskThreshold)
+		sendAlert("CPU", cpuUsage)
+		sendAlert("Memory", memUsage)
+		sendAlert("Disk", diskUsage)
 
 		time.Sleep(5 * time.Second)
 	}
@@ -122,10 +182,13 @@ func monitorResources() {
 func main() {
 	// Initial alert state
 	alertEnabled = true
+	limit := setDefaultLimit()
+	log.Println(limit)
 
 	// Set up routes
 	http.HandleFunc("/toggle-alerts", toggleAlertHandler)
 	http.HandleFunc("/resource-usage", resourceUsageHandler)
+	http.HandleFunc("/limit-changer", toggleLimitHandler)
 
 	// Start monitoring resources in the background
 	go monitorResources()
