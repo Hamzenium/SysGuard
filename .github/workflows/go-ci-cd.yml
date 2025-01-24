@@ -3,10 +3,10 @@ name: Go CI/CD
 on:
   push:
     branches:
-      - main
+      - Prod  # Trigger pipeline only when code is pushed to the Prod branch
   pull_request:
     branches:
-      - main
+      - Prod  # Also trigger pipeline for pull requests targeting the Prod branch
 
 jobs:
   test:
