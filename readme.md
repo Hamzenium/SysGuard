@@ -12,6 +12,7 @@ https://github.com/user-attachments/assets/12286cea-d799-48a2-9c70-3b94b1ab8b22
    Run the following command:
 
    ```bash
+   cd SysGuard
    make run-built
 ## Features
 
