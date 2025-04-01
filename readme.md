@@ -3,6 +3,16 @@ This project is a resource monitoring system built in Go (Golang) that tracks CP
 
 https://github.com/user-attachments/assets/12286cea-d799-48a2-9c70-3b94b1ab8b22
 
+### Steps to Run the Application
+
+1. **Clone the Repository**  
+   Clone the repository using the link above and navigate into the project directory.
+
+2. **Run the App**  
+   Run the following command:
+
+   ```bash
+   make run-built
 ## Features
 
 - **Real-time Resource Monitoring**: Monitors CPU, memory, disk, and system temperature usage and updates in real-time.
