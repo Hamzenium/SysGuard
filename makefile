@@ -38,6 +38,8 @@ run-frontend:
 
 run-all: deps build run-backend wait-backend run-frontend
 
+run-built: run-backend wait-backend run-frontend
+
 clean:
 	@echo "Cleaning up..."
 	rm -f $(BACKEND_DIR)/$(BINARY_NAME) $(FRONTEND_DIR)/$(BINARY_NAME) $(BACKEND_LOG)
