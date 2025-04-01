@@ -31,7 +31,6 @@ require (
 	github.com/nicksnyder/go-i18n/v2 v2.4.0 // indirect
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/progrium/darwinkit v0.5.0 // indirect
 	github.com/rogpeppe/go-internal v1.13.1 // indirect
 	github.com/rymdport/portal v0.3.0 // indirect
 	github.com/srwiley/oksvg v0.0.0-20221011165216-be6e8873101c // indirect
