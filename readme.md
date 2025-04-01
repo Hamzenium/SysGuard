@@ -6,9 +6,9 @@ https://github.com/user-attachments/assets/12286cea-d799-48a2-9c70-3b94b1ab8b22
 ### Steps to Run the Application
 
 1. **Clone the Repository**  
-   Clone the repository using the link above and navigate into the project directory.
-
-2. **Run the App**  
+   ```bash
+   git clone https://github.com/Hamzenium/SysGuard.git
+3. **Run the App**  
    Run the following command:
 
    ```bash
