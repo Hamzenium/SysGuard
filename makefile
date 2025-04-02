@@ -1,4 +1,4 @@
-BINARY_NAME = monitor
+BINARY_NAME = image
 
 GO = go
 GOFMT = gofmt
