@@ -1,14 +1,25 @@
 # Resource Monitor with Alerts
 This project is a resource monitoring system built in Go (Golang) that tracks CPU, memory, disk usage, and temperature on your machine. The system periodically checks the resource usage and compares it against predefined thresholds. If any resource exceeds the threshold, a notification is triggered to alert the user. The application features a backend API and a graphical user interface (GUI) that can be used to monitor and manage these resources.
 
+https://github.com/user-attachments/assets/12286cea-d799-48a2-9c70-3b94b1ab8b22
+
+### Steps to Run the Application
+
+1. **Clone the Repository**  
+   ```bash
+   git clone https://github.com/Hamzenium/SysGuard.git
+3. **Run the App**  
+   Run the following command:
+
+   ```bash
+   cd SysGuard
+   make run-built
 ## Features
 
 - **Real-time Resource Monitoring**: Monitors CPU, memory, disk, and system temperature usage and updates in real-time.
 - **Alerts**: Sends notifications when resource usage exceeds configured thresholds.
 - **Cross-Platform GUI**: A graphical user interface to monitor system resources and toggle alert notifications.
 - **Backend API**: Provides an API to fetch resource usage data and control alert settings.
-
-<img width="340" alt="Screenshot 2025-01-20 at 3 55 56 AM" src="https://github.com/user-attachments/assets/cdf02093-c207-4511-9308-cd031577a455" />
 
 ## Design Overview
 

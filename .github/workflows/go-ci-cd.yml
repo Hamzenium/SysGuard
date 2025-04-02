@@ -3,10 +3,10 @@ name: Go CI/CD
 on:
   push:
     branches:
-      - main
+      - Prod  # Trigger pipeline only when code is pushed to the Prod branch
   pull_request:
     branches:
-      - main
+      - Prod  # Also trigger pipeline for pull requests targeting the Prod branch
 
 jobs:
   test:
@@ -20,7 +20,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: 1.20 
+        go-version: 1.23.4  # Use the same Go version as your local setup
 
     - name: Install dependencies
       run: |

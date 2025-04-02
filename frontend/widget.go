@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -84,6 +85,17 @@ func changeLimits(cpuThreshold, memoryThreshold, diskThreshold float64) error {
 	return nil
 }
 
+// Function to shut down the backend server
+func shutdownServer() error {
+	resp, err := http.Post("http://localhost:8080/shutdown", "application/json", nil)
+	if err != nil {
+		return fmt.Errorf("error sending shutdown request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	return nil
+}
+
 func createGraphWindow(a fyne.App) fyne.Window {
 	w := a.NewWindow("SysGuard")
 
@@ -144,6 +156,17 @@ func createGraphWindow(a fyne.App) fyne.Window {
 		}
 	})
 
+	// Button to close the app
+	closeAppButton := widget.NewButton("Close App", func() {
+		if err := shutdownServer(); err != nil {
+			log.Println("Error shutting down server:", err)
+		} else {
+			log.Println("Server shut down successfully. Exiting application...")
+			a.Quit()
+			os.Exit(0) // Exit the frontend application
+		}
+	})
+
 	go func() {
 		for {
 			usage, err := fetchResourceUsage()
@@ -174,6 +197,7 @@ func createGraphWindow(a fyne.App) fyne.Window {
 		memEntry,
 		diskEntry,
 		changeLimitsButton,
+		closeAppButton, // Add the "Close App" button
 	)
 
 	w.SetContent(content)

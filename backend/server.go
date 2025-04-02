@@ -30,6 +30,7 @@ var (
 	alertEnabled bool
 	mu           sync.Mutex
 	defaultLimit = setDefaultLimit()
+	shutdownChan = make(chan struct{})
 )
 
 func setDefaultLimit() SetLimit {
@@ -105,6 +106,16 @@ func sendAlert(resource string, usage float64) {
 	}
 }
 
+func shutdownHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		log.Println("Received shutdown request")
+		close(shutdownChan) // Trigger shutdown
+		w.WriteHeader(http.StatusOK)
+	} else {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+	}
+}
+
 func toggleAlertHandler(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -169,8 +180,6 @@ func monitorResources() {
 		cpuUsage := getCPUUsage()
 		memUsage := getMemoryUsage()
 		diskUsage := getDiskUsage()
-
-		// Check if the resource usage exceeds thresholds and send notifications
 		sendAlert("CPU", cpuUsage)
 		sendAlert("Memory", memUsage)
 		sendAlert("Disk", diskUsage)
@@ -178,24 +187,34 @@ func monitorResources() {
 		time.Sleep(5 * time.Second)
 	}
 }
-
 func main() {
-	// Initial alert state
 	alertEnabled = true
 	limit := setDefaultLimit()
 	log.Println(limit)
+	server := &http.Server{
+		Addr: ":8080",
+	}
 
-	// Set up routes
 	http.HandleFunc("/toggle-alerts", toggleAlertHandler)
 	http.HandleFunc("/resource-usage", resourceUsageHandler)
 	http.HandleFunc("/limit-changer", toggleLimitHandler)
+	http.HandleFunc("/shutdown", shutdownHandler)
 
-	// Start monitoring resources in the background
 	go monitorResources()
 
-	// Start the backend server
-	log.Println("Starting backend server on port 8080...")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Fatal("Error starting server: ", err)
+	go func() {
+		log.Println("Starting backend server on port 8080...")
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Error starting server: %v", err)
+		}
+	}()
+
+	<-shutdownChan
+
+	log.Println("Shutting down the server...")
+	if err := server.Close(); err != nil {
+		log.Fatalf("Server shutdown failed: %v", err)
 	}
+
+	log.Println("Server stopped.")
 }
