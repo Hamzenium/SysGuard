@@ -1,9 +1,0 @@
-2025/04/02 06:06:40 {90 90 90}
-2025/04/02 06:06:40 Starting backend server on port 8080...
-2025/04/02 06:06:41 Alerts enabled: true
-2025/04/02 06:06:43 Alerts enabled: false
-2025/04/02 06:07:00 Updated limits - CPU: 5, Memory: 100, Disk: 100
-2025/04/02 06:07:01 Alerts enabled: true
-2025/04/02 06:07:16 Received shutdown request
-2025/04/02 06:07:16 Shutting down the server...
-2025/04/02 06:07:16 Server stopped.

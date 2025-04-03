@@ -86,18 +86,6 @@ The project includes robust error handling, ensuring that system failures or inv
 4. **Frontend Setup**:
     - Open a separate terminal, navigate to the frontend directory, and run the frontend application.
 
-## Using the Makefile
-
-You can use the Makefile to simplify the build and run process. Available commands include:
-
-- **Install dependencies**: Install the required dependencies.
-- **Build the backend**: Build the backend.
-- **Build the frontend**: Build the frontend.
-- **Run the backend**: Start the backend server.
-- **Run the frontend**: Start the frontend GUI.
-- **Clean up**: Remove generated binaries.
-- **Help**: View available commands.
-
 ## Technologies Used
 
 - **Go (Golang)**: Used for both the backend API and frontend GUI.

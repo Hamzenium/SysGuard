@@ -6,7 +6,7 @@ GOFMT = gofmt
 BACKEND_DIR = backend
 FRONTEND_DIR = frontend
 BACKEND_LOG = backend.log
-BACKEND_PORT = 8080  # Update this if needed
+BACKEND_PORT = 8080
 
 deps:
 	@echo "Installing Go dependencies..."
@@ -14,7 +14,7 @@ deps:
 
 build-backend:
 	@echo "Building the backend application..."
-	$(GO) build -o $(BACKEND_DIR)/$(BINARY_NAME) $(BACKEND_DIR)/server.go
+	$(GO) build -o $(BACKEND_DIR)/$(BINARY_NAME) $(BACKEND_DIR)/main.go
 
 build-frontend:
 	@echo "Building the frontend application..."
@@ -39,6 +39,14 @@ run-frontend:
 run-all: deps build run-backend wait-backend run-frontend
 
 run-built: run-backend wait-backend run-frontend
+
+docker-run:
+	@echo "Building binaries..."
+	$(MAKE) build
+	@echo "Building Docker image..."
+	docker-compose build
+	@echo "Starting container..."
+	docker-compose up -d
 
 clean:
 	@echo "Cleaning up..."
