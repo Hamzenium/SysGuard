@@ -1,0 +1,8 @@
+2025/07/13 19:32:49 Default limits: {90 90 90}
+2025/07/13 19:32:49 Starting backend server on port 8080...
+2025/07/13 19:33:01 Alerts enabled: false
+2025/07/13 19:33:02 Alerts enabled: true
+2025/07/13 19:33:03 Alerts enabled: false
+2025/07/13 19:33:15 Received shutdown request
+2025/07/13 19:33:15 Shutting down the server...
+2025/07/13 19:33:15 Server stopped.
